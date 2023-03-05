@@ -31,6 +31,10 @@ class Model:
     def compute_accuracy(self, predictions: np.ndarray, Y: np.ndarray):
         return np.sum(predictions == Y) / Y.size
     
+    # This function initializes the weights and biases for the neural network.
+    # The input layer_units is a list containing the number of units in each layer of the network.
+    # The weights are initialized using np.random.rand and subtracting 0.5 to shift the values to be centered around 0.
+    # The biases are initialized in the same way.
     def init_params(self, layer_units):
         self.W1 = np.random.rand(layer_units[1], layer_units[0]) - 0.5
         self.b1 = np.random.rand(layer_units[1], 1) - 0.5
@@ -47,6 +51,10 @@ class Model:
     # b2: 15 x 1
     # W3: 10 x 15
     # b2: 10 x 1
+    # This function performs forward propagation for the neural network using the input data X.
+    # The output of each layer is computed using matrix multiplication and addition with the corresponding weights and biases.
+    # The activation functions used are ReLU for the first two layers and softmax for the output layer.
+    # The output of each layer is returned.
     def forward_prop(self, X: np.ndarray):
         Z1 = np.matmul(self.W1, X) + self.b1 # Z1: 25 x m
         A1 = relu(Z1) # A1: 25 x m
@@ -57,6 +65,10 @@ class Model:
 
         return Z1, A1, Z2, A2, Z3, A3
 
+    # This function performs backpropagation for the neural network.
+    # The gradients of the loss function with respect to the weights and biases are computed using the chain rule and the gradients of the activation functions.
+    # The input Y_one_hot is the one-hot encoded labels, and the other inputs are the outputs from the forward propagation step.
+    # The gradients of the loss function with respect to the weights and biases for each layer are returned.
     def backward_prop(self, Y_one_hot: np.ndarray, Z1: np.ndarray, A1: np.ndarray, Z2: np.ndarray, A2: np.ndarray, A3: np.ndarray):
         m = self.X_train.shape[1] # number of training samples
         
@@ -80,6 +92,8 @@ class Model:
 
         return dj_dW1, dj_db1, dj_dW2, dj_db2, dj_dW3, dj_db3
 
+    # This function updates the weights and biases of the neural network using the gradients computed in the backpropagation step.
+    # The learning rate alpha is a class attribute. The weights and biases are updated using the standard gradient descent update rule.
     def update_params(
             self,
             dj_dW1: np.ndarray, dj_db1: np.ndarray, dj_dW2: np.ndarray, dj_db2: np.ndarray, dj_dW3: np.ndarray, dj_db3: np.ndarray,
@@ -98,7 +112,6 @@ class Model:
         cost = -np.sum(np.log(probs))
 
         return cost
-
 
     def gradient_descent(self):
         Y_one_hot = self.one_hot(self.y_train)
